@@ -31,6 +31,7 @@ class MainActivity : AppCompatActivity(),Timer.OnTimerTickListener{
     //private var filename = ""
     private var isRecord = false
     private var isPause = false
+    private var isPlay = false
     private var a : Float = 0F
 
     private lateinit var timer: Timer
@@ -66,11 +67,17 @@ class MainActivity : AppCompatActivity(),Timer.OnTimerTickListener{
 
         }
         btnStop.setOnClickListener{
-            stopRecord()
+            when{
+                isPlay -> stopPlay()
+                else -> stopRecord()
+            }
+
         }
         btnReplay.setOnClickListener {
             replay()
         }
+
+
 
     }
 
@@ -169,12 +176,33 @@ class MainActivity : AppCompatActivity(),Timer.OnTimerTickListener{
 
     }
 
+    private fun stopPlay()
+    {
+        Toast.makeText(this, "Recording stopped", Toast.LENGTH_LONG).show()
+        //timer.stop()
+        if(mediaPlayer.isPlaying)
+        {
+            mediaPlayer.apply {
+                stop()
+                release()
+            }
+            isPlay = false
+        }
+        btnRecord.setImageResource(R.drawable.ic_baseline_play_arrow_24)
+        isPause = false
+        isRecord = false
+
+
+    }
+
     private fun replay()
     {
         Toast.makeText(this, "Recording playing", Toast.LENGTH_LONG).show()
 
+        isPlay = true
         isPause = false
         isRecord = false
+
         try {
             mediaPlayer = MediaPlayer()
             mediaPlayer.setDataSource(getRecordingFilePath())
